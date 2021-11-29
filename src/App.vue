@@ -35,6 +35,10 @@ export default {
     methods: {
         apiCall(text) {
             if (text !== '') {
+                // Array reset
+                this.apiArray = [],
+
+                // Api Call with Axios
                 axios.get('https://api.themoviedb.org/3/search/movie/', {
                     params: {
                         api_key: '18eb9cfc2ae9b902fe63f5463046505f',

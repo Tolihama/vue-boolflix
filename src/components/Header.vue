@@ -3,8 +3,13 @@
         <input 
             v-model.trim="inputSearch"
             type="text"
+            @keyup.enter="$emit('search', inputSearch)"
         >
-        <button @click="$emit('search', inputSearch)">Search</button>
+        <button 
+            @click="$emit('search', inputSearch)"
+        >
+            Search
+        </button>
     </header>
 </template>
 
