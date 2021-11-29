@@ -4,6 +4,7 @@
             v-model.trim="inputSearch"
             type="text"
             @keyup.enter="$emit('search', inputSearch)"
+            @keyup="clear"
         >
         <button 
             @click="$emit('search', inputSearch)"
@@ -20,6 +21,13 @@ export default {
         return {
             inputSearch: '',
         }
+    },
+    methods: {
+        clear(input) {
+            if (input.key === 'Delete') {
+                this.inputSearch = '';
+            }
+        },
     },
 }
 </script>
