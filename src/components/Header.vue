@@ -1,13 +1,21 @@
 <template>
     <header>
-        <input type="text">
-        <button>Search</button>
+        <input 
+            v-model.trim="inputSearch"
+            type="text"
+        >
+        <button @click="$emit('search', inputSearch)">Search</button>
     </header>
 </template>
 
 <script>
 export default {
-
+    name: 'Header',
+    data() {
+        return {
+            inputSearch: '',
+        }
+    },
 }
 </script>
 
