@@ -2,7 +2,11 @@
     <ul class="movie">
         <li class="title">Titolo: {{ title }}</li>
         <li class="original-title">Titolo Originale: {{ originalTitle }}</li>
-        <li class="lang">Lingua: <img :src="langImg" :alt="lang"></li>
+        <li class="lang">
+            Lingua: 
+            <img v-if="thereIsLangImg" :src="require(`../assets/flags/${this.lang}.png`)" :alt="lang">
+            <span v-if="!thereIsLangImg">{{ lang }}</span>
+        </li>
         <li class="rate">Voto: {{ rate }}</li>
     </ul>
 </template>
@@ -17,13 +21,10 @@ export default {
         rate: Number,
     },
     computed: {
-        langImg() {
+        thereIsLangImg() {
             const langAvailable = ['it', 'en'];
-            if (langAvailable.includes(this.lang)) {
-                return require(`../assets/flags/${this.lang}.png`);
-            }
-            return this.lang;
-        }
+            return langAvailable.includes(this.lang) ? true : false;
+        },
     },
 }
 </script>
