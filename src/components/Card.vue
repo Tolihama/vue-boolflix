@@ -1,6 +1,6 @@
 <template>
     <ul>
-        <li class="cover">
+        <li v-if="thereIsCoverImg" class="cover">
             <img :src="cover" :alt="title">
         </li>
         <li class="title">Titolo: {{ title }}</li>
@@ -28,6 +28,9 @@ export default {
             const langAvailable = ['it', 'en'];
             return langAvailable.includes(this.lang);
         },
+        thereIsCoverImg() {
+            return !this.cover.includes('null');
+        }
     },
 }
 </script>

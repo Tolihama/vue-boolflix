@@ -23,7 +23,7 @@ export default {
     },
     computed: {
         isOutput() {
-            return this.list.length === 0 ? false : true;
+            return this.list.length !== 0;
         },
     },
     props: {
