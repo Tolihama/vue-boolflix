@@ -1,5 +1,8 @@
 <template>
     <ul>
+        <li class="cover">
+            <img :src="cover" :alt="title">
+        </li>
         <li class="title">Titolo: {{ title }}</li>
         <li class="original-title">Titolo Originale: {{ originalTitle }}</li>
         <li class="lang">
@@ -14,6 +17,7 @@
 export default {
     name: 'Card',
     props: {
+        cover: String,
         title: String,
         originalTitle: String,
         lang: String,
@@ -30,6 +34,10 @@ export default {
 
 <style scoped lang="scss">
 ul {
+    .cover {
+        list-style: none;
+    }
+
     .lang {
         img {
             height: 20px;

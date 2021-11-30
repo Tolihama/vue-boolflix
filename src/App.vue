@@ -6,10 +6,11 @@
             <h2 v-if="isSearchKey">
                 In archivio ci sono <strong>{{ movieList.length + tvSeriesList.length }}</strong> risultati per '<strong>{{ searchKey }}</strong>'
             </h2>
-            <div class="d-flex w-100 space-around">
+            <div class="card-list-container">
                 <CardList 
                     :list="movieList" 
                     titleList="Movies"
+                    apiPropCover="poster_path"
                     apiPropTitle="title"
                     apiPropOriginalTitle="original_title"
                     apiPropLang="original_language"
@@ -18,6 +19,7 @@
                 <CardList 
                     :list="tvSeriesList" 
                     titleList="Serie TV"
+                    apiPropCover="poster_path"
                     apiPropTitle="name"
                     apiPropOriginalTitle="original_name"
                     apiPropLang="original_language"
@@ -99,15 +101,12 @@ main {
     }
 }
 
-.d-flex {
+.card-list-container {
     display: flex;
-}
-
-.w-100 {
     width: 100%;
-}
 
-.space-around {
-    justify-content: space-around;
+    & > * {
+        flex-grow: 1;
+    }
 }
 </style>
