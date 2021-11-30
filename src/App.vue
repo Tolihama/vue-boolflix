@@ -10,6 +10,7 @@
                 <CardList 
                     :list="movieList" 
                     titleList="Movies"
+                    coverBaseUrl="https://image.tmdb.org/t/p/w342/"
                     apiPropCover="poster_path"
                     apiPropTitle="title"
                     apiPropOriginalTitle="original_title"
@@ -19,6 +20,7 @@
                 <CardList 
                     :list="tvSeriesList" 
                     titleList="Serie TV"
+                    coverBaseUrl="https://image.tmdb.org/t/p/w342/"
                     apiPropCover="poster_path"
                     apiPropTitle="name"
                     apiPropOriginalTitle="original_name"

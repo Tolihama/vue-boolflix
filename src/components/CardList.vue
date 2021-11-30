@@ -4,7 +4,7 @@
         <Card 
             v-for="item in list"
             :key="item.id"
-            :cover="coverPath(item[apiPropCover])"
+            :cover="coverBaseUrl + item[apiPropCover]"
             :title="item[apiPropTitle]"
             :originalTitle="item[apiPropOriginalTitle]"
             :lang="item[apiPropLang]"
@@ -29,17 +29,13 @@ export default {
     props: {
         list: Array,
         titleList: String,
+        coverBaseUrl: String,
         apiPropCover: String,
         apiPropTitle: String,
         apiPropOriginalTitle: String,
         apiPropLang: String,
         apiPropRate: String,
     },
-    methods: {
-        coverPath(ending) {
-            return 'https://image.tmdb.org/t/p/w342' + ending;
-        }
-    }
 }
 </script>
 
