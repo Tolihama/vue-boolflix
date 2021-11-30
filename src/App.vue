@@ -1,26 +1,36 @@
 <template>
     <div id="app">
-        <Header @search="apiCall" />
+        <Header @search="performSearch" />
 
         <main>
-            <h2 v-if="apiArray.length > 0">
-                In archivio ci sono <strong>{{ apiArray.length }}</strong> risultati per '<strong>{{ searchKey }}</strong>'
+            <h2 v-if="isSearchKey">
+                In archivio ci sono <strong>{{ movieList.length + tvSeriesList.length }}</strong> risultati per '<strong>{{ searchKey }}</strong>'
             </h2>
-            <Card 
-                v-for="(item, index) in apiArray"
-                :key="`movie-${index}`"
-                :title="item.title"
-                :originalTitle="item.original_title"
-                :lang="item.original_language"
-                :rate="item.vote_average"
-            />
+            <div class="d-flex w-100 space-around">
+                <CardList 
+                    :list="movieList" 
+                    titleList="Movies"
+                    apiPropTitle="title"
+                    apiPropOriginalTitle="original_title"
+                    apiPropLang="original_language"
+                    apiPropRate="vote_average"
+                />
+                <CardList 
+                    :list="tvSeriesList" 
+                    titleList="Serie TV"
+                    apiPropTitle="name"
+                    apiPropOriginalTitle="original_name"
+                    apiPropLang="original_language"
+                    apiPropRate="vote_average"
+                />
+            </div>
         </main>
     </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue';
-import Card from '@/components/Card.vue';
+import CardList from '@/components/CardList.vue';
 
 import axios from 'axios';
 
@@ -28,35 +38,48 @@ export default {
     name: "App",
     components: {
         Header,
-        Card
+        CardList
     },
     data() {
         return {
-            apiArray: [],
+            movieList: [],
+            tvSeriesList: [],
             searchKey: '',
         }
     },
+    computed: {
+        isSearchKey() {
+            return this.searchKey !== '';
+        }
+    },
     methods: {
-        apiCall(text) {
+        performSearch(text) {
             if (text !== '') {
                 // Array reset
-                this.apiArray = [],
+                this.movieList = [];
+                this.tvSeriesList = [];
 
                 // Save search key
                 this.searchKey = text;
 
-                // Api Call with Axios
-                axios.get('https://api.themoviedb.org/3/search/movie/', {
-                    params: {
-                        api_key: '18eb9cfc2ae9b902fe63f5463046505f',
-                        language: 'it-IT',
-                        query: text,
-                    },
-                })
-                .then(result => result.data.results.forEach(e => this.apiArray.push(e)))
-                .catch(err => console.log(err));
+                // Api Call with Axios for movieList
+                this.apiCall('https://api.themoviedb.org/3/search/movie/', text, this.movieList);
+
+                // Api Call with Axios for tvSeriesList
+                this.apiCall('https://api.themoviedb.org/3/search/tv/', text, this.tvSeriesList);
             }
         },
+        apiCall(endpoint, queryKey, destinationArray) {
+            axios.get(endpoint, {
+                params: {
+                    api_key: '18eb9cfc2ae9b902fe63f5463046505f',
+                    language: 'it-IT',
+                    query: queryKey,
+                }
+            })
+            .then(result => result.data.results.forEach(e => destinationArray.push(e)))
+            .catch(err => console.log(err));
+        }
     },
 };
 </script>
@@ -74,5 +97,17 @@ main {
     h2 {
         font-weight: 400;
     }
+}
+
+.d-flex {
+    display: flex;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.space-around {
+    justify-content: space-around;
 }
 </style>
