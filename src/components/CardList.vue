@@ -1,15 +1,18 @@
 <template>
     <div>
-        <h3 v-if="isOutput">{{ titleList }}</h3>
-        <Card 
-            v-for="item in list"
-            :key="item.id"
-            :cover="coverBaseUrl + item[apiPropCover]"
-            :title="item[apiPropTitle]"
-            :originalTitle="item[apiPropOriginalTitle]"
-            :lang="item[apiPropLang]"
-            :rate="item[apiPropRate]"
-        />
+        <h3 v-if="isOutput" class="text-center py-3 fw-bold h2">{{ titleList }}</h3>
+        <div class="row justify-content-center">
+            <Card 
+                v-for="item in list"
+                :key="item.id"
+                :cover="coverBaseUrl + item[apiPropCover]"
+                :title="item[apiPropTitle]"
+                :originalTitle="item[apiPropOriginalTitle]"
+                :lang="item[apiPropLang]"
+                :rate="item[apiPropRate]"
+                :description="item[apiPropDesc]"
+            />
+        </div>
     </div>
 </template>
 
@@ -35,6 +38,7 @@ export default {
         apiPropOriginalTitle: String,
         apiPropLang: String,
         apiPropRate: String,
+        apiPropDesc: String,
     },
 }
 </script>

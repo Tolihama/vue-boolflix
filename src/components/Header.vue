@@ -1,16 +1,16 @@
 <template>
-    <header>
+    <header class="d-flex align-items-center">
+        <div class="logo flex-grow-1">
+            <img src="@/assets/boolfix.png" alt="Boolfix Logo">
+        </div>
+
         <input 
             v-model.trim="inputSearch"
             type="text"
+            placeholder="Fai la tua ricerca"
             @keyup.enter="$emit('search', inputSearch)"
             @keyup="clear"
         >
-        <button 
-            @click="$emit('search', inputSearch)"
-        >
-            Search
-        </button>
     </header>
 </template>
 
@@ -33,5 +33,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+header {
+    background: #111;
+    padding: 20px;
 
+    input {
+        width: 15%;
+        min-width: 300px;
+        padding: .5rem 1.5rem;
+        border-radius: 100rem;
+    }
+}
 </style>
