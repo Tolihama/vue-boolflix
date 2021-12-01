@@ -2,10 +2,10 @@
     <div class="col-sm-12 col-md-6 col-lg-4 col-xl-2 col p-3">
         <div class="card">
             <div class="cover">
-                <img v-if="thereIsCoverImg" class="w-100" :src="cover" :alt="title">
+                <img v-if="thereIsCoverImg" :src="cover" :alt="title">
                 <img v-else class="w-100" src="@/assets/image-not-found.png" :alt="title">
             </div>
-            <ul>
+            <ul class="text">
                 <li class="title text-center">
                     <h3 class="fw-bold m-0">{{ title }}</h3>
                 </li>
@@ -66,44 +66,52 @@ export default {
 
 <style scoped lang="scss">
 .card {
-    display: block;
     border-radius: 30px;
+    min-height: 400px;
+    height: 100%;
     position: relative;
     overflow: hidden;
     box-shadow: 0 5px 10px rgba(0,0,0,.5);
+    border: 0;
 
-    ul {
+    .cover img {
         position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    ul.text {
+        list-style: none;
+        position: relative;
         opacity: 0;
         cursor: pointer;
         transition: opacity .5s;
         background: rgba(0,0,0,.8);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         padding: 1rem;
         margin: 0;
         width: 100%;
-        height: calc(100% + 1px);
-        max-height: calc(100% + 1px);
+        height: 100%;
         box-shadow: 0 0 20px rgba(0,0,0,.5) inset;
+        z-index: 1;
 
         &:hover {
             opacity: 1;
         }
-    }
-}
 
-ul {
-    list-style: none;
+        li {
+            padding: 5px 0;
+        }
 
-    li {
-        padding: 5px 0;
-    }
+        .lang {
+            img {
+                height: 20px;
+            }
+        }
 
-    .lang {
-        img {
-            height: 20px;
+        .description {
+            max-height: 200px;
+            overflow: auto;
         }
     }
 }

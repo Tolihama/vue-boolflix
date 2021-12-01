@@ -1,8 +1,8 @@
 <template>
-    <div id="app">
+    <div id="app" class="d-flex flex-column">
         <Header @search="performSearch" />
 
-        <main class="container-fluid p-5">
+        <main class="container-fluid p-5 flex-grow-1">
             <h2 v-if="isSearchKey">
                 <strong>{{ totalMoviesResults + totalTvSeriesResults }}</strong>
                 risultati ({{ totalMoviesResults }} film, {{ totalTvSeriesResults }} serie tv) per '<strong>{{ searchKey }}</strong
@@ -115,13 +115,17 @@ img {
 }
 
 // APP
-main {
-    background: #333;
+#app {
     min-height: 100vh;
-    color: #fff;
 
-    h2 {
-        font-weight: 400;
+    main {
+        background: #333;
+        color: #fff;
+        overflow: auto;
+
+        h2 {
+            font-weight: 400;
+        }
     }
 }
 </style>

@@ -4,7 +4,8 @@
             <img src="@/assets/boolfix.png" alt="Boolfix Logo">
         </div>
 
-        <input 
+        <input
+            class="flex-shrink-0"
             v-model.trim="inputSearch"
             type="text"
             placeholder="Fai la tua ricerca"
