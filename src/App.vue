@@ -1,6 +1,7 @@
 <template>
     <div id="app" class="d-flex flex-column">
         <img
+            v-if="backgroundUrl !== ''"
             class="background"
             :src="backgroundUrl" 
             alt="Background"
@@ -8,7 +9,9 @@
 
         <Header @search="performSearch" />
 
-        <main class="container-fluid flex-grow-1">
+        <LandingPage v-if="noResults"/>
+
+        <main v-else class="container-fluid flex-grow-1">
             <h2 v-if="isSearchKey">
                 <strong>{{ totalMoviesResults + totalTvSeriesResults }}</strong>
                 risultati ({{ totalMoviesResults }} film, {{ totalTvSeriesResults }} serie tv) per '<strong>{{ searchKey }}</strong
@@ -46,6 +49,7 @@
 
 <script>
 import Header from "@/components/Header.vue";
+import LandingPage from "@/components/LandingPage.vue";
 import CardList from "@/components/CardList.vue";
 
 import axios from "axios";
@@ -54,6 +58,7 @@ export default {
     name: "App",
     components: {
         Header,
+        LandingPage,
         CardList,
     },
     data() {
@@ -68,10 +73,13 @@ export default {
     },
     computed: {
         isSearchKey() {
-            return this.searchKey !== "";
+            return this.searchKey !== '';
         },
         thereIsBackground() {
             return this.backgroundUrl !== '' || !this.backgroundUrl.includes('null');
+        },
+        noResults() {
+            return this.movieList.length === 0 && this.tvSeriesList.length === 0;
         }
     },
     methods: {
