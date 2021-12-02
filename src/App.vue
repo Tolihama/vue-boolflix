@@ -1,8 +1,14 @@
 <template>
     <div id="app" class="d-flex flex-column">
+        <img
+            class="background"
+            :src="backgroundUrl" 
+            alt="Background"
+        >
+
         <Header @search="performSearch" />
 
-        <main class="container-fluid p-5 flex-grow-1">
+        <main class="container-fluid flex-grow-1">
             <h2 v-if="isSearchKey">
                 <strong>{{ totalMoviesResults + totalTvSeriesResults }}</strong>
                 risultati ({{ totalMoviesResults }} film, {{ totalTvSeriesResults }} serie tv) per '<strong>{{ searchKey }}</strong
@@ -13,22 +19,26 @@
                 titleList="Movies"
                 coverBaseUrl="https://image.tmdb.org/t/p/w342/"
                 apiPropCover="poster_path"
+                apiPropBackground="backdrop_path"
                 apiPropTitle="title"
                 apiPropOriginalTitle="original_title"
                 apiPropLang="original_language"
                 apiPropRate="vote_average"
                 apiPropDesc="overview"
+                @cardHover="changeBackground"
             />
             <CardList
                 :list="tvSeriesList"
                 titleList="Serie TV"
                 coverBaseUrl="https://image.tmdb.org/t/p/w342/"
                 apiPropCover="poster_path"
+                apiPropBackground="backdrop_path"
                 apiPropTitle="name"
                 apiPropOriginalTitle="original_name"
                 apiPropLang="original_language"
                 apiPropRate="vote_average"
                 apiPropDesc="overview"
+                @cardHover="changeBackground"
             />
         </main>
     </div>
@@ -52,13 +62,17 @@ export default {
             totalMoviesResults: 0,
             tvSeriesList: [],
             totalTvSeriesResults: 0,
-            searchKey: "",
+            searchKey: '',
+            backgroundUrl: '',
         };
     },
     computed: {
         isSearchKey() {
             return this.searchKey !== "";
         },
+        thereIsBackground() {
+            return this.backgroundUrl !== '' || !this.backgroundUrl.includes('null');
+        }
     },
     methods: {
         performSearch(text) {
@@ -104,6 +118,9 @@ export default {
                     .catch((err) => console.log(err));
             }
         },
+        changeBackground(endpoint) {
+            this.backgroundUrl = `https://image.tmdb.org/t/p/original${endpoint}`;
+        }
     },
 };
 </script>
@@ -116,12 +133,23 @@ img {
 
 // APP
 #app {
+    position: relative;
     min-height: 100vh;
+    background: #333;
+    overflow-y: hidden;
+
+    img.background {
+        position: fixed;
+        width: 100%;
+        object-fit: cover;
+    }
 
     main {
-        background: #333;
+        padding: calc(3rem + 126px) 3rem 3rem;
+        background: rgba(33,33,33,0.5);
         color: #fff;
         overflow: auto;
+        z-index: 1;
 
         h2 {
             font-weight: 400;
