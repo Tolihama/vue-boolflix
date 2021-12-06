@@ -5,16 +5,10 @@
         </h3>
         <div class="row pb-4 card-list">
             <Card 
-                v-for="item in list"
-                :key="item.id"
-                :cover="coverBaseUrl + item[apiPropCover]"
-                :background="item[apiPropBackground]"
-                :title="item[apiPropTitle]"
-                :originalTitle="item[apiPropOriginalTitle]"
-                :lang="item[apiPropLang]"
-                :rate="item[apiPropRate]"
-                :description="item[apiPropDesc]"
-                @cardIsHover="hoverTrigger"
+                v-for="(item, i) in list"
+                :key="i"
+                :item="item"
+                @cardMouseover="cardMouseoverTrigger"
             />
         </div>
     </div>
@@ -36,18 +30,10 @@ export default {
     props: {
         list: Array,
         titleList: String,
-        coverBaseUrl: String,
-        apiPropCover: String,
-        apiPropBackground: String,
-        apiPropTitle: String,
-        apiPropOriginalTitle: String,
-        apiPropLang: String,
-        apiPropRate: String,
-        apiPropDesc: String,
     },
     methods: {
-        hoverTrigger(endpoint) {
-            this.$emit('cardHover', endpoint);
+        cardMouseoverTrigger(endpoint) {
+            this.$emit('cardMouseover', endpoint);
         }
     }
 }
@@ -64,8 +50,8 @@ h3 {
     }
 }
 
-.card-list {
+/* .card-list {
     flex-wrap: nowrap;
     overflow-x: auto;
-}
+} */
 </style>

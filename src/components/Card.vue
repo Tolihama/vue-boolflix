@@ -1,38 +1,38 @@
 <template>
     <div 
-        class="col-sm-12 col-md-6 col-lg-4 col-xl-2 col p-3"
-        @mouseover="$emit('cardIsHover', background)"
+        class="col-sm-12 col-md-6 col-lg-4 col-xl-2 col px-1 py-3"
+        @mouseover="$emit('cardMouseover', item.background)"
     >
         <div class="card">
             <div class="cover">
-                <img v-if="thereIsCoverImg" :src="cover" :alt="title" />
+                <img v-if="thereIsCoverImg" :src="`https://image.tmdb.org/t/p/w342${item.cover}`" :alt="item.title" />
                 <img
                     v-else
                     class="w-100"
                     src="@/assets/image-not-found.png"
-                    :alt="title"
+                    :alt="item.title"
                 />
             </div>
-            <ul class="text">
+            <ul class="text d-flex flex-column justify-content-center">
                 <li class="title text-center">
-                    <h3 class="fw-bold m-0">{{ title }}</h3>
+                    <h3 class="fw-bold m-0">{{ item.title }}</h3>
                 </li>
                 <li
-                    v-if="originalTitle.toLowerCase() !== title.toLowerCase()"
+                    v-if="item.originalTitle.toLowerCase() !== item.title.toLowerCase()"
                     class="original-title text-center"
                 >
-                    <h4>({{ originalTitle }})</h4>
+                    <h4>({{ item.originalTitle }})</h4>
                 </li>
                 <li class="lang d-flex justify-content-center">
                     <img
                         v-if="thereIsLangImg"
-                        :src="require(`../assets/flags/${this.lang}.png`)"
-                        :alt="lang"
+                        :src="require(`../assets/flags/${item.lang}.png`)"
+                        :alt="item.lang"
                     />
-                    <span v-else>{{ lang }}</span>
+                    <span v-else>{{ item.lang }}</span>
                 </li>
-                <li class="rate text-center">
-                    Voto: {{ rate / 2 }}<br />
+                <li class="rate text-center pt-3 pb-5">
+                    Voto: {{ item.rate / 2 }}<br />
                     <i
                         v-for="(n, i) in stars"
                         :key="`rate-${i}`"
@@ -44,7 +44,18 @@
                         class="far fa-star icon"
                     ></i>
                 </li>
-                <li class="description">{{ description }}</li>
+                <li 
+                    v-if="item.genres.length > 0"
+                    class="genres"
+                >
+                    Generi:
+                    <span 
+                        v-for="genre in item.genres"
+                        :key="`${item.id}-${genre}`"
+                    >
+                        {{ genre }}
+                    </span>
+                </li>
             </ul>
         </div>
     </div>
@@ -54,24 +65,18 @@
 export default {
     name: "Card",
     props: {
-        cover: String,
-        background: String,
-        title: String,
-        originalTitle: String,
-        lang: String,
-        rate: Number,
-        description: String,
+        item: Object,
     },
     computed: {
         thereIsLangImg() {
             const langAvailable = ["it", "en"];
-            return langAvailable.includes(this.lang);
+            return langAvailable.includes(this.item.lang);
         },
         thereIsCoverImg() {
-            return !this.cover.includes("null");
+            return !this.item.cover.includes("null");
         },
         stars() {
-            return Math.ceil(this.rate / 2);
+            return Math.ceil(this.item.rate / 2);
         },
     },
 };
@@ -79,11 +84,10 @@ export default {
 
 <style scoped lang="scss">
 .card {
-    border-radius: 30px;
     height: 500px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
     border: 0;
 
     .cover img {
@@ -119,6 +123,21 @@ export default {
         .lang {
             img {
                 height: 20px;
+            }
+        }
+
+        .rate .icon {
+            color: yellow;
+            font-size: 2rem;
+        }
+
+        .genres {
+            span::after {
+                content: ', ';
+            }
+
+            span:last-child::after {
+                content: '';
             }
         }
     }
