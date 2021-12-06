@@ -1,7 +1,7 @@
 <template>
     <div 
         class="col-sm-12 col-md-6 col-lg-4 col-xl-2 col px-1 py-3"
-        @mouseover="$emit('cardMouseover', item.background)"
+        @mouseover="cardMouseoverFunc"
     >
         <div class="card">
             <div class="cover">
@@ -44,7 +44,7 @@
                         class="far fa-star icon"
                     ></i>
                 </li>
-                <li 
+                <li
                     v-if="item.genres.length > 0"
                     class="genres"
                 >
@@ -56,14 +56,34 @@
                         {{ genre }}
                     </span>
                 </li>
+                <li
+                    v-if="cast.length > 0"
+                    class="cast"
+                >
+                    Cast:
+                    <span
+                        v-for="(actor, index) in selectedCast"
+                        :key="`${item.id}-${index}`"
+                    >
+                        {{ actor.name }}
+                    </span>
+
+                </li>
             </ul>
         </div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "Card",
+    data() {
+        return {
+            cast: [],
+        }
+    },
     props: {
         item: Object,
     },
@@ -78,6 +98,30 @@ export default {
         stars() {
             return Math.ceil(this.item.rate / 2);
         },
+        selectedCast() {
+            const selectedCast = [];
+            for (let i = 0; i < 5; i++) {
+                selectedCast.push(this.cast[i]);
+            }
+            return selectedCast;
+        }
+    },
+    methods: {
+        cardMouseoverFunc() {
+            // Emit for change background in app.vue
+            this.$emit('cardMouseover', this.item.background);
+
+            // Axios call for cast
+            axios.get(`https://api.themoviedb.org/3/${this.item.type}/${this.item.id}/credits?api_key=18eb9cfc2ae9b902fe63f5463046505f&language=it-IT`)
+            .then(result => this.cast = result.data.cast)
+            .catch(err => console.log(err));
+        },
+        castRetrieve() {
+            console.log('castRetrive function');
+            axios.get(`https://api.themoviedb.org/3/${this.item.type}/${this.item.id}/credits?api_key=18eb9cfc2ae9b902fe63f5463046505f&language=it-IT`)
+            .then(result => this.cast = result.data.cast)
+            .catch(err => console.log(err));
+        }
     },
 };
 </script>
@@ -131,7 +175,8 @@ export default {
             font-size: 2rem;
         }
 
-        .genres {
+        .genres,
+        .cast {
             span::after {
                 content: ', ';
             }

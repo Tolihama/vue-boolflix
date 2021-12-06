@@ -122,7 +122,8 @@ export default {
                                 rate: e.vote_average,
                                 description: e.overview,
                                 background: e.backdrop_path,
-                                cover: e.poster_path
+                                cover: e.poster_path,
+                                type: 'movie'
                             });
                         });
                     })
@@ -150,8 +151,10 @@ export default {
                                 lang: e.original_language,
                                 rate: e.vote_average,
                                 description: e.overview,
+                                cast: this.tvCastRetrieve(e.id),
                                 background: e.backdrop_path,
-                                cover: e.poster_path
+                                cover: e.poster_path,
+                                type: 'tv'
                             });
                         });
                     })
