@@ -14,7 +14,7 @@
             <div class="cover flex-shrink-0">
                 <img :src="`https://image.tmdb.org/t/p/w342${infos.cover}`" :alt="infos.title">
             </div>
-            <ul class="text fs-4 flex-grow-1">
+            <ul class="text fs-4 flex-grow-1 pe-3">
                 <li class="rate py-1">
                     <strong>Voto:</strong> {{ infos.rate / 2 }} <br>
                     <i
@@ -31,7 +31,7 @@
                 <li class="genres py-1">
                     <strong>Generi:</strong>
                     <span 
-                        v-for="genre in infos.genres" 
+                        v-for="genre in genresList" 
                         :key="`${infos.id}-${genre}`"
                         class="genre"
                     >
@@ -109,6 +109,13 @@ export default {
         },
         actorList() {
             return this.isActorListReduced ? this.reducedActorList : this.completeActorList;
+        },
+        genresList() {
+            const genresList = [...this.infos.genres];
+            for (let i = 0; i < genresList.length - 1; i++) {
+                genresList[i] += ', ';
+            }
+            return genresList;
         }
     },
     methods: {

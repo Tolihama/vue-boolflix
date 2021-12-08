@@ -95,7 +95,7 @@ export default {
             return Math.ceil(this.item.rate / 2);
         },
         genresList() {
-            const genresList = this.item.genres;
+            const genresList = [...this.item.genres];
             for (let i = 0; i < genresList.length - 1; i++) {
                 genresList[i] += ', ';
             }
