@@ -1,39 +1,59 @@
 <template>
     <div id="app" class="d-flex flex-column">
-        <img
-            v-if="backgroundUrl !== ''"
-            class="background"
-            :src="backgroundUrl" 
-            alt="Background"
-        >
-
         <Header @search="performSearch" />
 
-        <LandingPage v-if="noResults"/>
+        <img 
+            class="background active"
+            src="./assets/landing_background.jpg" 
+            alt="Boolfix Default Background"
+        >
+        <img
+            v-for="bg in backgroundList"
+            class="background"
+            :key="`bg-${bg.type}-${bg.id}`"
+            :src="bg.url" 
+            :alt="`Background ${bg.type}-${bg.id}`"
+            :class="{active : `${bg.type}-${bg.id}` === mouseOnItemId}"
+        >
 
-        <main v-else class="container-fluid flex-grow-1">
-            <h2 v-if="isSearchKey">
-                <strong>{{ totalMoviesResults + totalTvSeriesResults }}</strong>
-                risultati ({{ totalMoviesResults }} film, {{ totalTvSeriesResults }} serie tv) per '<strong>{{ searchKey }}</strong
-                >'
-            </h2>
-            <CardList
-                :list="movieList"
-                titleList="Movies"
-                @cardMouseover="changeBackground"
-            />
-            <CardList
-                :list="tvSeriesList"
-                titleList="Serie TV"
-                @cardMouseover="changeBackground"
-            />
-        </main>
+        <transition name="fade" mode="out-in">
+            <LandingPage v-if="noResults"/>
+            <main v-else class="container-fluid flex-grow-1">
+                <transition name="fade" mode="out-in">
+                    <div v-if="!thereIsActiveItem">
+                        <h2 v-if="isSearchKey">
+                            <strong>{{ totalMoviesResults + totalTvSeriesResults }}</strong>
+                            risultati ({{ totalMoviesResults }} film, {{ totalTvSeriesResults }} serie tv) per '<strong>{{ searchKey }}</strong
+                            >'
+                        </h2>
+                        <CardList
+                            :list="movieList"
+                            titleList="Movie"
+                            @cardMouseover="changeOnMouseId"
+                            @cardClicked="openCardDetails"
+                        />
+                        <CardList
+                            :list="tvSeriesList"
+                            titleList="Serie TV"
+                            @cardMouseover="changeOnMouseId"
+                            @cardClicked="openCardDetails"
+                        />
+                    </div>
+                    <CardDetails 
+                        v-else
+                        :infos="activeItem" 
+                        @cardDetailsClicked="closeCardDetails"
+                    />
+                </transition>
+            </main>
+        </transition>
     </div>
 </template>
 
 <script>
 import Header from "@/components/Header.vue";
 import LandingPage from "@/components/LandingPage.vue";
+import CardDetails from "@/components/CardDetails.vue";
 import CardList from "@/components/CardList.vue";
 
 import axios from "axios";
@@ -43,6 +63,7 @@ export default {
     components: {
         Header,
         LandingPage,
+        CardDetails,
         CardList,
     },
     data() {
@@ -54,7 +75,8 @@ export default {
             movieGenres: [],
             tvSeriesGenres: [],
             searchKey: '',
-            backgroundUrl: '',
+            mouseOnItemId: null,
+            activeItem: null,
         };
     },
     created() {
@@ -64,11 +86,25 @@ export default {
         isSearchKey() {
             return this.searchKey !== '';
         },
-        thereIsBackground() {
-            return this.backgroundUrl !== '' || !this.backgroundUrl.includes('null');
+        backgroundList() {
+            const backgroundList = [];
+            const movieAndTvList = [...this.movieList, ...this.tvSeriesList];
+            movieAndTvList.forEach(item => {
+                if (item.background !== null) {
+                    backgroundList.push({
+                        url: 'https://image.tmdb.org/t/p/original' + item.background,
+                        type: item.type,
+                        id: item.id
+                    })
+                }
+            });
+            return backgroundList;
         },
         noResults() {
             return this.movieList.length === 0 && this.tvSeriesList.length === 0;
+        },
+        thereIsActiveItem() {
+            return this.activeItem !== null;
         }
     },
     methods: {
@@ -151,7 +187,6 @@ export default {
                                 lang: e.original_language,
                                 rate: e.vote_average,
                                 description: e.overview,
-                                cast: this.tvCastRetrieve(e.id),
                                 background: e.backdrop_path,
                                 cover: e.poster_path,
                                 type: 'tv'
@@ -161,8 +196,14 @@ export default {
                     .catch((err) => console.log(err));
             }
         },
-        changeBackground(endpoint) {
-            this.backgroundUrl = `https://image.tmdb.org/t/p/original${endpoint}`;
+        changeOnMouseId(id) {
+            this.mouseOnItemId = id;
+        },
+        openCardDetails(activeItem) {
+            this.activeItem = activeItem;
+        },
+        closeCardDetails() {
+            this.activeItem = null;
         }
     },
 };
@@ -174,10 +215,19 @@ img {
     display: block;
 }
 
+// TRANSITION
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s ease;
+}
+
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
 // APP
 #app {
     position: relative;
-    min-height: 100vh;
+    height: 100vh;
     background: #333;
     overflow-y: hidden;
 
@@ -186,13 +236,19 @@ img {
         width: 100%;
         height: 100vh;
         object-fit: cover;
+        opacity: 0;
+        transition: opacity 1s;
+
+        &.active {
+            opacity: 1;
+        }
     }
 
     main {
         padding: calc(3rem + 126px) 3rem 3rem;
         background: rgba(33,33,33,0.5);
         color: #fff;
-        overflow: auto;
+        overflow-y: auto;
         z-index: 1;
 
         h2 {

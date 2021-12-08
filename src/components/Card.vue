@@ -1,7 +1,8 @@
 <template>
     <div 
         class="col-sm-12 col-md-6 col-lg-4 col-xl-2 col px-1 py-3"
-        @mouseover="cardMouseoverFunc"
+        @mouseover="$emit('cardMouseover', `${item.type}-${item.id}`)"
+        @click="cardClick"
     >
         <div class="card">
             <div class="cover">
@@ -31,8 +32,8 @@
                     />
                     <span v-else>{{ item.lang }}</span>
                 </li>
-                <li class="rate text-center pt-3 pb-5">
-                    Voto: {{ item.rate / 2 }}<br />
+                <li class="rate text-center py-4">
+                    <div class="pb-2 fs-5">Voto: {{ item.rate / 2 }}</div>
                     <i
                         v-for="(n, i) in stars"
                         :key="`rate-${i}`"
@@ -46,28 +47,19 @@
                 </li>
                 <li
                     v-if="item.genres.length > 0"
-                    class="genres"
+                    class="genres py-3 text-center"
                 >
-                    Generi:
+                    <strong>Generi:</strong><br>
                     <span 
-                        v-for="genre in item.genres"
+                        v-for="genre in genresList"
                         :key="`${item.id}-${genre}`"
                     >
                         {{ genre }}
                     </span>
                 </li>
-                <li
-                    v-if="cast.length > 0"
-                    class="cast"
-                >
-                    Cast:
-                    <span
-                        v-for="(actor, index) in selectedCast"
-                        :key="`${item.id}-${index}`"
-                    >
-                        {{ actor.name }}
-                    </span>
-
+                <li class="show-infos text-center fs-5 fw-bold d-flex flex-column justify-content-end flex-grow-1">
+                    Scopri di più!<br>
+                    <i class="fas fa-info-circle"></i>
                 </li>
             </ul>
         </div>
@@ -82,10 +74,14 @@ export default {
     data() {
         return {
             cast: [],
+            activeItem: null,
         }
     },
     props: {
         item: Object,
+    },
+    created() {
+        this.castRetrieve();
     },
     computed: {
         thereIsLangImg() {
@@ -93,33 +89,29 @@ export default {
             return langAvailable.includes(this.item.lang);
         },
         thereIsCoverImg() {
-            return !this.item.cover.includes("null");
+            return this.item.cover !== null;
         },
         stars() {
             return Math.ceil(this.item.rate / 2);
         },
-        selectedCast() {
-            const selectedCast = [];
-            for (let i = 0; i < 5; i++) {
-                selectedCast.push(this.cast[i]);
+        genresList() {
+            const genresList = this.item.genres;
+            for (let i = 0; i < genresList.length - 1; i++) {
+                genresList[i] += ', ';
             }
-            return selectedCast;
+            return genresList;
         }
     },
     methods: {
-        cardMouseoverFunc() {
-            // Emit for change background in app.vue
-            this.$emit('cardMouseover', this.item.background);
-
-            // Axios call for cast
-            axios.get(`https://api.themoviedb.org/3/${this.item.type}/${this.item.id}/credits?api_key=18eb9cfc2ae9b902fe63f5463046505f&language=it-IT`)
-            .then(result => this.cast = result.data.cast)
-            .catch(err => console.log(err));
+        cardClick() {
+            this.$emit('cardClicked', this.activeItem);
         },
         castRetrieve() {
-            console.log('castRetrive function');
             axios.get(`https://api.themoviedb.org/3/${this.item.type}/${this.item.id}/credits?api_key=18eb9cfc2ae9b902fe63f5463046505f&language=it-IT`)
-            .then(result => this.cast = result.data.cast)
+            .then(result => {
+                this.cast = result.data.cast;
+                this.activeItem = {...this.item, cast: result.data.cast};
+            })
             .catch(err => console.log(err));
         }
     },
@@ -131,8 +123,15 @@ export default {
     height: 500px;
     position: relative;
     overflow: hidden;
-    // box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5), 0 0 5px 1px #000;
     border: 0;
+    border-radius: 30px;
+    transition: transform .5s;
+
+    &:hover {
+        transform: scale(110%);
+        z-index: 1;
+    }
 
     .cover img {
         position: absolute;
@@ -146,18 +145,20 @@ export default {
         position: relative;
         opacity: 0;
         cursor: pointer;
-        transition: opacity 0.5s;
+        transition: all 1s;
         background: rgba(0, 0, 0, 0.8);
         padding: 1rem;
         margin: 0;
         width: 100%;
         height: 100%;
         overflow-y: auto;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5) inset;
+        border: 1px solid #000;
+        box-shadow: 0 0 50px 1px rgba(255, 255, 255, 0.5) inset;
         z-index: 1;
 
         &:hover {
             opacity: 1;
+            transition: opacity 1s;
         }
 
         li {
@@ -170,19 +171,10 @@ export default {
             }
         }
 
-        .rate .icon {
-            color: yellow;
-            font-size: 2rem;
-        }
-
-        .genres,
-        .cast {
-            span::after {
-                content: ', ';
-            }
-
-            span:last-child::after {
-                content: '';
+        .rate {         
+            .icon {
+                color: yellow;
+                font-size: 1.5rem;
             }
         }
     }

@@ -1,6 +1,5 @@
 <template>
     <div class="landing flex-grow-1">
-        <img src="../assets/landing_background.jpg" alt="Background">
         <div class="landing-text d-flex flex-column justify-content-center text-center">
             <i class="fas fa-tv icon"></i>
             <h2>Inizia la tua ricerca!</h2>

@@ -9,6 +9,7 @@
                 :key="i"
                 :item="item"
                 @cardMouseover="cardMouseoverTrigger"
+                @cardClicked="cardClickedTrigger"
             />
         </div>
     </div>
@@ -32,8 +33,12 @@ export default {
         titleList: String,
     },
     methods: {
-        cardMouseoverTrigger(endpoint) {
-            this.$emit('cardMouseover', endpoint);
+        cardMouseoverTrigger(id) {
+            console.log(id);
+            this.$emit('cardMouseover', id);
+        },
+        cardClickedTrigger(activeItem) {
+            this.$emit('cardClicked', activeItem);
         }
     }
 }
